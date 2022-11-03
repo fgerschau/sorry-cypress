@@ -1,5 +1,10 @@
 import type { Instance, Project, Run, RunTimeout } from '@sorry-cypress/common';
-import mongodb, { MongoClient, MongoClientOptions, ObjectId } from 'mongodb';
+import mongodb, {
+  AuthMechanism,
+  MongoClient,
+  MongoClientOptions,
+  ObjectId,
+} from 'mongodb';
 import {
   MONGODB_AUTH_MECHANISM,
   MONGODB_DATABASE,
@@ -29,10 +34,7 @@ export const initMongoNoIndexes = async () => {
   if (client && db) {
     return;
   }
-  const options: MongoClientOptions = {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  };
+  const options: MongoClientOptions = {};
 
   if (MONGODB_AUTH_MECHANISM != undefined) {
     if (!MONGODB_USER) {
@@ -45,8 +47,8 @@ export const initMongoNoIndexes = async () => {
         'MONGODB_PASSWORD is required when MONGODB_AUTH_MECHANISM is set'
       );
     }
-    options.authMechanism = MONGODB_AUTH_MECHANISM;
-    options.auth = { user: MONGODB_USER, password: MONGODB_PASSWORD };
+    options.authMechanism = MONGODB_AUTH_MECHANISM as AuthMechanism;
+    options.auth = { username: MONGODB_USER, password: MONGODB_PASSWORD };
   }
 
   client = await MongoClient.connect(MONGODB_URI, {
